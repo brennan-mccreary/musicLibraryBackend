@@ -2,13 +2,13 @@
 const express = require('express');
 const app = express();
 
-//CORS future implementation line 
-//
+//CORS implementation 
+//const cors = require('cors');
 
-//Middleware future implementation line
-//
+//Middleware implementation
+//const { validateSong } = require('./middleware/songs-validation');
 
-//app.use(corse());
+//app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
