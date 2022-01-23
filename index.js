@@ -3,12 +3,12 @@ const express = require('express');
 const app = express();
 
 //CORS implementation 
-//const cors = require('cors');
+const cors = require('cors');
 
 //Middleware implementation
-//const { validateSong } = require('./middleware/songs-validation');
+const { validateSong } = require('./middleware/songs-validation');
 
-//app.use(cors());
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -16,8 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 const repoContext = require('./repository/repository-wrapper.js');
 
 //Listener
-const PORT = 3000; //define port value
-app.listen(PORT, (PORT) => {
+const PORT = process.env.PORT || 5000; //define port value
+app.listen(PORT, () => {
     console.log(`Server started. Listening on port ${PORT}`);
 });
 
@@ -37,18 +37,20 @@ app.get('/api/songs/:id', (req, res) => {
 });
 
 //Handle POST REQ -- New Song (Validate)
-app.post('/api/songs',/* [validateSong],*/(req, res) => {
+app.post('/api/songs', [validateSong], (req, res) => {
     const newSong = req.body;
     const addedSong = repoContext.songs.createSong(newSong);
-    return res.send(addedSong);
+    const songList = repoContext.songs.findAllSongs();
+    return res.send(songList);
 });
 
 //Handle PUT REQ -- Edit Song by ID (Validate)
-app.put('/api/songs/:id',/* [validateSong],*/(req, res) => {
+app.put('/api/songs/:id', [validateSong], (req, res) => {
     const id = req.params.id;
     const songUpdatedProperties = req.body;
     const updatedSong = repoContext.songs.updateSong(id, songUpdatedProperties);
-    return res.send(updatedSong);
+    const songList = repoContext.songs.findAllSongs();
+    return res.send(songList);
 });
 
 //Handle DELETE REQ -- Delete Song by ID
